@@ -1,5 +1,5 @@
-def call(body) {
-    def MPL = MPLPipelineConfig(body, [
+def call(Map params) {
+    def MPL = MPLPipelineConfig(params, [
         agent_label: 'jenkins-agent',
         modules: [
             Checkout: [:],

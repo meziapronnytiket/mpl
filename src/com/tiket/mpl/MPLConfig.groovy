@@ -1,17 +1,11 @@
 package com.tiket.mpl
 
-class MPLConfig {
+class MPLConfig implements Serializable {
     private def config = [:]
 
-    MPLConfig(def body = null, Map defaults = [:]) {
-        config = defaults
-        if (body) {
-            def config_temp = [:]
-            body.resolveStrategy = Closure.DELEGATE_FIRST
-            body.delegate = config_temp
-            body()
-            config.putAll(config_temp)
-        }
+    MPLConfig(Map params = [:], Map defaults = [:]) {
+        config = defaults.clone()
+        config.putAll(params)
     }
 
     def getModulesList() {

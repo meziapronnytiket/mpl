@@ -1,8 +1,8 @@
-@Library('MPL@master') _
+@Library('MPL@main') _
 
-TiketPipeline {
-    agent_label = 'jenkins-agent'
-    modules = [
+TiketPipeline([
+    agent_label: 'jenkins-agent',
+    modules: [
         Checkout: [
             branch: 'main',
             url: 'https://github.com/your-repo.git'
@@ -23,4 +23,4 @@ TiketPipeline {
             enabled: true
         ]
     ]
-}
+])
