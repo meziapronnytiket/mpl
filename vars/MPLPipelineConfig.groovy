@@ -6,18 +6,24 @@ def call(Map params = [:], Map defaults = [:]) {
     def config = new MPLConfig(params, defaults)
     Helper.instance.setConfig(config)
 
-    // Load containers for active modules
-    def requiredContainers = []
-    def seenContainerNames = [] // Track container names to avoid duplicates
+    // Centralized container management
+    def requiredContainers = loadContainersForEnabledModules(config)
+    config.setContainers(requiredContainers)
+    return config
+}
+
+private def loadContainersForEnabledModules(config) {
+    def containers = []
+    def seenContainerNames = []
 
     config.getModulesList().each { name, moduleConfig ->
-        if (moduleConfig != null) {
+        if (moduleConfig != null && MPLModuleEnabled(name)) {
             try {
-                def containers = MPLManager.getModuleContainers(this, name)
-                containers.each { container ->
+                def moduleContainers = MPLManager.getModuleContainers(this, name)
+                moduleContainers.each { container ->
                     if (!seenContainerNames.contains(container.name)) {
                         seenContainerNames.add(container.name)
-                        requiredContainers.add(container)
+                        containers.add(container)
                     }
                 }
             } catch (Exception e) {
@@ -25,7 +31,5 @@ def call(Map params = [:], Map defaults = [:]) {
             }
         }
     }
-
-    config.setContainers(requiredContainers)
-    return config
+    return containers
 }
