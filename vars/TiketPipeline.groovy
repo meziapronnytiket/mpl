@@ -31,6 +31,12 @@ def call(Map params) {
                     }
                 }
 
+                if (MPLModuleEnabled("Build")) {
+                    stage('Build') {
+                        MPLModule('Build')
+                    }
+                }
+
                 stage('Scan') {
                     if (MPLModuleEnabled("Scan")) {
                         MPLModule('Scan')
