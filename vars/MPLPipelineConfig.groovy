@@ -8,15 +8,15 @@ def call(Map params = [:], Map defaults = [:]) {
 
     // Load containers for active modules
     def requiredContainers = []
-    def seenContainers = [] // Track container names to avoid duplicates
+    def seenContainerNames = [] // Track container names to avoid duplicates
 
     config.getModulesList().each { name, moduleConfig ->
         if (moduleConfig != null) {
             try {
                 def containers = MPLManager.getModuleContainers(this, name)
                 containers.each { container ->
-                    if (!(container.name in seenContainers)) {
-                        seenContainers.add(container.name)
+                    if (!seenContainerNames.contains(container.name)) {
+                        seenContainerNames.add(container.name)
                         requiredContainers.add(container)
                     }
                 }

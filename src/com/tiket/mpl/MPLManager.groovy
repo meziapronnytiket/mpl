@@ -46,7 +46,18 @@ class MPLManager implements Serializable {
         try {
             def script = steps.libraryResource(containerPath)
             def result = steps.evaluate(script)
-            return result ?: []
+            if (result instanceof List) {
+                return result.collect { container ->
+                    containerTemplate(
+                        name: container.name,
+                        image: container.image,
+                        command: container.command,
+                        args: container.args ?: '',
+                        ttyEnabled: container.ttyEnabled ?: false
+                    )
+                }
+            }
+            return []
         } catch (Exception e) {
             steps.echo "No containers defined for module ${name}"
             return []
