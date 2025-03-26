@@ -4,7 +4,6 @@ def call(Map params) {
         modules: [
             Checkout: [:],
             Test: [:],
-            Build: [:],
             Scan: [:],
             Notification: [:]
         ]
@@ -32,12 +31,6 @@ def call(Map params) {
                 stage('Test') {
                     if (MPLModuleEnabled("Test")) {
                         MPLModule('Test')
-                    }
-                }
-
-                stage('Build') {
-                    if (MPLModuleEnabled("Build")) {
-                        MPLModule('Build')
                     }
                 }
 

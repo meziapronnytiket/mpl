@@ -11,10 +11,6 @@ TiketPipeline([
             type: 'unit',
             coverage: true
         ],
-        Build: [
-            type: 'maven',
-            goals: 'clean package'
-        ],
         Scan: [
             type: 'sonarqube'
         ],
