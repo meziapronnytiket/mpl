@@ -28,17 +28,14 @@ class MPLManager implements Serializable {
     static def executeModule(def steps, String modulePath, def config) {
         def moduleScript = steps.libraryResource(modulePath)
 
-        // Create a simplified execution context by directly exposing methods
-        def binding = new Binding([
-            echo: { msg -> steps.echo(msg) },
-            sh: { cmd -> steps.sh(cmd) },
-            container: { name, closure -> steps.container(name, closure) },
-            config: config
-        ])
-
-        // Execute the script in the Pipeline context
-        def shell = new GroovyShell(binding)
-        shell.evaluate(moduleScript)
+        // Directly evaluate the script in the Pipeline context
+        steps.evaluate("""
+            def echo = { msg -> steps.echo(msg) }
+            def sh = { cmd -> steps.sh(cmd) }
+            def container = { name, closure -> steps.container(name, closure) }
+            def config = ${config.inspect()}
+            ${moduleScript}
+        """)
     }
 
     static def getModuleContainers(def steps, String name) {
