@@ -3,13 +3,7 @@ import com.tiket.mpl.MPLManager
 def call(Map params) {
     def MPL = MPLPipelineConfig(params, [
         agent_label: 'jenkins-agent',
-        modules: [
-            Checkout: [:],     // Default enabled is null (treated as true)
-            Test: [:],         // Default enabled is null (treated as true)
-            Build: [:],        // Default enabled is null (treated as true)
-            Scan: [:],         // Default enabled is null (treated as true)
-            Notification: [:]   // Default enabled is null (treated as true)
-        ]
+        modules: [:] // Remove defaults, let Jenkinsfile define all modules
     ])
 
     podTemplate(
