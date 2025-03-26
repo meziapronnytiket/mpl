@@ -1,1 +1,1 @@
-steps.echo "sending notification to slack"
+echo "sending notification to slack"

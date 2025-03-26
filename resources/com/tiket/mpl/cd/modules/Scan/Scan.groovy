@@ -1,1 +1,1 @@
-steps.echo "scan from resource"
+echo "scan from resource"

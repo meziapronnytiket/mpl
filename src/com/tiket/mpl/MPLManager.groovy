@@ -10,16 +10,12 @@ class MPLManager implements Serializable {
         for (path in paths) {
             def modulePath = "${MODULE_PATH}/${path}/${name}.groovy"
             try {
-                // Test if resource exists first
-                def content = steps.libraryResource(modulePath)
-                if (content) {
-                    foundPath = modulePath
-                    steps.echo "Found module at ${modulePath}"
-                    break
-                }
+                steps.libraryResource(modulePath)
+                foundPath = modulePath
+                steps.echo "Found module at ${modulePath}"
+                break
             } catch (Exception e) {
                 steps.echo "Module not found in ${modulePath}"
-                continue
             }
         }
 
@@ -31,28 +27,20 @@ class MPLManager implements Serializable {
 
     static def executeModule(def steps, String modulePath) {
         def moduleScript = steps.libraryResource(modulePath)
-        def script = """
-            def steps = binding.getVariable('steps')
+        def config = Helper.instance.getConfig()
+
+        // Execute the script in the Pipeline context
+        steps.evaluate("""
             def config = binding.getVariable('config')
-
             ${moduleScript}
-        """
-        def binding = new Binding([
-            steps: steps,
-            config: Helper.instance.getConfig().getConfig()
-        ])
-
-        def shell = new GroovyShell(steps.getClass().getClassLoader(), binding)
-        shell.evaluate(script)
+        """)
     }
 
     static def getModuleContainers(def steps, String name) {
         def containerPath = "${MODULE_PATH}/containers/${name}.groovy"
         try {
-            def containerScript = steps.libraryResource(containerPath)
-            def binding = new Binding([steps: steps])
-            def shell = new GroovyShell(steps.getClass().getClassLoader(), binding)
-            return shell.evaluate(containerScript)
+            def script = steps.libraryResource(containerPath)
+            return steps.evaluate(script)
         } catch (Exception e) {
             steps.echo "No containers defined for module ${name}"
             return []

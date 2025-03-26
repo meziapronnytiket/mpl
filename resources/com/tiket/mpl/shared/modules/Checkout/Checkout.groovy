@@ -1,1 +1,1 @@
-steps.echo "from Checkout"
+echo "from Checkout"

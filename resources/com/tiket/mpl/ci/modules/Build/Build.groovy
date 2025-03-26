@@ -1,12 +1,12 @@
-steps.echo "Building application..."
+echo "Building application..."
 
 if (config.modules.Build?.type == 'docker') {
-    steps.container('kaniko') {
-        steps.sh """
+    container('kaniko') {
+        sh """
             echo "Kaniko Build..."
             ls -la
         """
     }
 } else {
-    steps.echo "Using default build"
+    echo "Using default build"
 }

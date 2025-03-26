@@ -1,1 +1,1 @@
-steps.echo "deploy to server"
+echo "deploy to server"
