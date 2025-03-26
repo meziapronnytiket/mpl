@@ -9,13 +9,11 @@ class MPLManager implements Serializable {
         for (path in paths) {
             def modulePath = "${MODULE_PATH}/${path}/${name}.groovy"
             try {
-                if (steps.fileExists("resources/${modulePath}")) {
-                    steps.libraryResource(modulePath)
-                    return modulePath
-                }
+                steps.libraryResource(modulePath)
+                steps.echo "Found module at ${modulePath}"
+                return modulePath
             } catch (Exception e) {
-                steps.echo "Checking next path for module ${name}"
-                continue
+                steps.echo "Module not found in ${modulePath}"
             }
         }
         steps.error("Module ${name} not found in paths: ${paths}")
