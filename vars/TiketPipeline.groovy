@@ -25,7 +25,7 @@ def call(Map params) {
         },
         serviceAccount: 'jenkins-service-account'
     ) {
-        node(POD_LABEL) {
+        node(params.agent_label ?: 'jenkins-agent') {
             def pipelineResult = 'SUCCESS'
             try {
                 stage('Checkout') {
