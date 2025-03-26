@@ -4,19 +4,29 @@ def call(Map params) {
         modules: [
             Checkout: [:],
             Test: [:],
+            Build: [:],
             Scan: [:],
             Notification: [:]
         ]
     ])
 
+    // Get active modules and their containers
+    def activeModules = []
+    def requiredContainers = []
+
+    params.modules.each { name, config ->
+        if (MPLModuleEnabled(name)) {
+            activeModules << name
+            // Load module to get its container requirements
+            def moduleContainers = MPLManager.getModuleContainers(this, name)
+            if (moduleContainers) {
+                requiredContainers.addAll(moduleContainers)
+            }
+        }
+    }
+
     podTemplate(
-        containers: [
-            containerTemplate(
-                name: 'busybox',
-                image: 'busybox',
-                command: 'cat',
-                ttyEnabled: true)
-        ],
+        containers: requiredContainers.unique { it.name },
         serviceAccount: 'jenkins-service-account'
     ) {
         node(POD_LABEL) {

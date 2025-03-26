@@ -15,4 +15,14 @@ class MPLConfig implements Serializable {
     def getConfig() {
         return config
     }
+
+    def getContainerTemplates(List moduleNames) {
+        def containers = []
+        moduleNames.each { name ->
+            if (config.modules[name]?.containers) {
+                containers.addAll(config.modules[name].containers)
+            }
+        }
+        return containers.unique { it.name }
+    }
 }

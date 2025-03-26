@@ -3,13 +3,13 @@
 TiketPipeline([
     agent_label: 'jenkins-agent',
     modules: [
-        Checkout: [
-            branch: 'main',
-            url: 'https://github.com/your-repo.git'
-        ],
+        Checkout: [:],
         Test: [
             type: 'unit',
             coverage: true
+        ],
+        Build: [
+            type: 'docker'
         ],
         Scan: [
             type: 'sonarqube'
