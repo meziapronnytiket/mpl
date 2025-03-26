@@ -3,20 +3,23 @@
 TiketPipeline([
     agent_label: 'jenkins-agent',
     modules: [
-        Checkout: [:],
+        Checkout: [enabled: true],
         Test: [
+            enabled: false,  // This module will be skipped
             type: 'unit',
             coverage: true
         ],
         Build: [
+            enabled: true,
             type: 'docker'
         ],
         Scan: [
+            enabled: true,
             type: 'sonarqube'
         ],
         Notification: [
-            channel: '#jenkins-builds',
-            enabled: true
+            enabled: true,
+            channel: '#jenkins-builds'
         ]
     ]
 ])
