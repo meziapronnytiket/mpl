@@ -2,7 +2,7 @@ import com.tiket.mpl.MPLManager
 
 def call(Map params) {
     def MPL = MPLPipelineConfig(params, [
-        agent_label: 'jenkins-agent',
+        agent_label: POD_LABEL,
         modules: [
             Checkout: [:],
             Test: [:],
@@ -13,7 +13,16 @@ def call(Map params) {
     ])
 
     podTemplate(
-        containers: MPL.getContainers(),
+        label: params.agent_label ?: POD_LABEL,
+        containers: MPL.getContainers().collect { container ->
+            containerTemplate(
+                name: container.name,
+                image: container.image,
+                command: container.command,
+                args: container.args,
+                ttyEnabled: container.ttyEnabled
+            )
+        },
         serviceAccount: 'jenkins-service-account'
     ) {
         node(POD_LABEL) {

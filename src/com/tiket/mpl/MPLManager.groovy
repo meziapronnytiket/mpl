@@ -41,7 +41,19 @@ class MPLManager implements Serializable {
     static def getModuleContainers(def steps, String name) {
         def containerPath = "${MODULE_PATH}/containers/${name}.groovy"
         try {
-            return steps.evaluate(steps.libraryResource(containerPath)) ?: []
+            def containerScript = steps.libraryResource(containerPath)
+            return steps.evaluate("""
+                def containerTemplate = { map ->
+                    return [
+                        name: map.name,
+                        image: map.image,
+                        command: map.command,
+                        args: map.args ?: '',
+                        ttyEnabled: map.ttyEnabled ?: false
+                    ]
+                }
+                ${containerScript}
+            """) ?: []
         } catch (Exception e) {
             steps.echo "No containers defined for module ${name}"
             return []
