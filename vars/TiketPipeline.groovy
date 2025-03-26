@@ -13,7 +13,6 @@ def call(Map params) {
     ])
 
     podTemplate(
-        label: params.agent_label ?: 'jenkins-agent',
         containers: MPL.getContainers().collect { container ->
             containerTemplate(
                 name: container.name,
@@ -25,7 +24,7 @@ def call(Map params) {
         },
         serviceAccount: 'jenkins-service-account'
     ) {
-        node(params.agent_label ?: 'jenkins-agent') {
+        node(POD_LABEL) {
             def pipelineResult = 'SUCCESS'
             try {
                 stage('Checkout') {
