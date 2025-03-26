@@ -1,8 +1,11 @@
 steps.echo "Building application..."
 
-if (MPL.getConfig().modules.Build?.type == 'docker') {
+if (config.modules.Build?.type == 'docker') {
     steps.container('kaniko') {
-        steps.sh "Kaniko Build..."
+        steps.sh """
+            echo "Kaniko Build..."
+            ls -la
+        """
     }
 } else {
     steps.echo "Using default build"

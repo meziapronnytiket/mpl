@@ -31,19 +31,19 @@ class MPLManager implements Serializable {
 
     static def executeModule(def steps, String modulePath) {
         def moduleScript = steps.libraryResource(modulePath)
-        // Create a script object with binding
-        def config = Helper.instance.getConfig().getConfig()
+        def script = """
+            def steps = binding.getVariable('steps')
+            def config = binding.getVariable('config')
+
+            ${moduleScript}
+        """
         def binding = new Binding([
             steps: steps,
-            config: config,
-            currentBuild: steps.currentBuild,
-            env: steps.env
+            config: Helper.instance.getConfig().getConfig()
         ])
 
-        // Load and execute the script
-        def shell = new GroovyShell(binding)
-        def script = shell.parse(moduleScript)
-        script.run()
+        def shell = new GroovyShell(steps.getClass().getClassLoader(), binding)
+        shell.evaluate(script)
     }
 
     static def getModuleContainers(def steps, String name) {
