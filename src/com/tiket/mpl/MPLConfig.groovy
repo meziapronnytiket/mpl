@@ -2,6 +2,7 @@ package com.tiket.mpl
 
 class MPLConfig implements Serializable {
     private def config = [:]
+    private def containers = []
 
     MPLConfig(Map params = [:], Map defaults = [:]) {
         config = defaults.clone()
@@ -24,5 +25,13 @@ class MPLConfig implements Serializable {
             }
         }
         return containers.unique { it.name }
+    }
+
+    def setContainers(def containerList) {
+        containers = containerList
+    }
+
+    def getContainers() {
+        return containers
     }
 }

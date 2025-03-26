@@ -1,3 +1,5 @@
+import com.tiket.mpl.MPLManager
+
 def call(Map params) {
     def MPL = MPLPipelineConfig(params, [
         agent_label: 'jenkins-agent',
@@ -10,23 +12,8 @@ def call(Map params) {
         ]
     ])
 
-    // Get active modules and their containers
-    def activeModules = []
-    def requiredContainers = []
-
-    params.modules.each { name, config ->
-        if (MPLModuleEnabled(name)) {
-            activeModules << name
-            // Load module to get its container requirements
-            def moduleContainers = MPLManager.getModuleContainers(this, name)
-            if (moduleContainers) {
-                requiredContainers.addAll(moduleContainers)
-            }
-        }
-    }
-
     podTemplate(
-        containers: requiredContainers.unique { it.name },
+        containers: MPL.getContainers(),
         serviceAccount: 'jenkins-service-account'
     ) {
         node(POD_LABEL) {
