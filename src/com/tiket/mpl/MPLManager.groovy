@@ -44,15 +44,7 @@ class MPLManager implements Serializable {
             def script = steps.libraryResource(containerPath)
             def result = steps.evaluate(script)
             if (result instanceof List) {
-                return result.collect { container ->
-                    containerTemplate(
-                        name: container.name,
-                        image: container.image,
-                        command: container.command,
-                        args: container.args ?: '',
-                        ttyEnabled: container.ttyEnabled ?: false
-                    )
-                }
+                return result
             }
             return []
         } catch (Exception e) {
