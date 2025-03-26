@@ -8,12 +8,17 @@ def call(Map params = [:], Map defaults = [:]) {
 
     // Load containers for active modules
     def requiredContainers = []
+    def seenContainers = [] // Track container names to avoid duplicates
+
     config.getModulesList().each { name, moduleConfig ->
         if (moduleConfig != null) {
             try {
-                def moduleContainers = MPLManager.getModuleContainers(this, name)
-                if (moduleContainers) {
-                    requiredContainers.addAll(moduleContainers)
+                def containers = MPLManager.getModuleContainers(this, name)
+                containers.each { container ->
+                    if (!(container.name in seenContainers)) {
+                        seenContainers.add(container.name)
+                        requiredContainers.add(container)
+                    }
                 }
             } catch (Exception e) {
                 echo "Warning: Could not load containers for module ${name}: ${e.message}"
@@ -21,8 +26,6 @@ def call(Map params = [:], Map defaults = [:]) {
         }
     }
 
-    // Store containers in config for later use
-    config.setContainers(requiredContainers.unique { it.name })
-
+    config.setContainers(requiredContainers)
     return config
 }

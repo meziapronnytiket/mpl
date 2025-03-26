@@ -27,11 +27,11 @@ class MPLConfig implements Serializable {
         return containers.unique { it.name }
     }
 
-    def setContainers(def containerList) {
-        containers = containerList
+    def setContainers(List containerList) {
+        containers = containerList ?: []
     }
 
     def getContainers() {
-        return containers
+        return containers ?: []
     }
 }
