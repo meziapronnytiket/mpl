@@ -26,10 +26,6 @@ def call(Map params = [:], Map defaults = [:]) {
         }
     }
 
-    if (requiredContainers.isEmpty()) {
-        echo "No containers defined for any module. Using default pod template."
-    }
-
     config.setContainers(requiredContainers)
     return config
 }
