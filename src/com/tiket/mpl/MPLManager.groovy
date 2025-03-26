@@ -5,18 +5,28 @@ class MPLManager implements Serializable {
 
     static def loadModule(def steps, String name) {
         def paths = ["ci/modules/${name}", "cd/modules/${name}", "shared/modules/${name}"]
+        def foundPath = null
 
         for (path in paths) {
             def modulePath = "${MODULE_PATH}/${path}/${name}.groovy"
             try {
-                steps.libraryResource(modulePath)
-                steps.echo "Found module at ${modulePath}"
-                return modulePath
+                // Test if resource exists first
+                def content = steps.libraryResource(modulePath)
+                if (content) {
+                    foundPath = modulePath
+                    steps.echo "Found module at ${modulePath}"
+                    break
+                }
             } catch (Exception e) {
                 steps.echo "Module not found in ${modulePath}"
+                continue
             }
         }
-        steps.error("Module ${name} not found in paths: ${paths}")
+
+        if (!foundPath) {
+            steps.error("Module ${name} not found in paths: ${paths}")
+        }
+        return foundPath
     }
 
     static def executeModule(def steps, String modulePath) {
